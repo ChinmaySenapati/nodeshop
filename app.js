@@ -1,14 +1,19 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const {engine} = require('express-handlebars');
 
 const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop')
 
 const app = express();
 
-app.set('view engine', 'pug');
-app.set('views','views');
+app.engine('.hbs', engine({extname: '.hbs'}));
+app.set('view engine', '.hbs');
+app.set('views','./views');
+//app.set('view engine', 'pug');
+// app.set('views','views');
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 //to access express filesystem folders & can register multiple path::
