@@ -1,19 +1,14 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
-const {engine} = require('express-handlebars');
 
 const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop')
 
 const app = express();
 
-app.engine('.hbs', engine({extname: '.hbs'}));
-app.set('view engine', '.hbs');
-app.set('views','./views');
-//app.set('view engine', 'pug');
-// app.set('views','views');
-
+app.set('view engine', 'ejs');
+app.set('views','views');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 //to access express filesystem folders & can register multiple path::
@@ -31,7 +26,7 @@ app.use(shopRoutes)
 app.use((req,res,next) => {
     //res.status(404).send('<h1>Page Not Found!</h1>')
     //res.status(404).sendFile(path.join(__dirname,'views','404.html'))
-    res.status(404).render('404', {pageTitle: 'Page Not Found'});
+    res.status(404).render('404', {pageTitle: 'Page Not Found',  path:"error"});
 })
 
 app.listen(3000);
