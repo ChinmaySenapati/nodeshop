@@ -7,6 +7,10 @@ const errorController = require('./controllers/error');
 const sequelize = require('./util/database');
 const Product = require('./models/product');
 const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
+const Order = require('./models/order');
+const OrderItem = require('./models/order-item');
 
 const app = express();
 
@@ -15,8 +19,6 @@ app.set('views', 'views');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
-const Cart = require('./models/cart');
-const CartIthem = require('./models/cart-item');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -39,8 +41,11 @@ Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Product);
 User.hasOne(Cart);
 Cart.belongsTo(User); //any one direction association can be ok. No need the other one.
-Cart.belongsToMany(Product, { through: CartIthem} );
-Product.belongsToMany(Cart, { through: CartIthem} );
+Cart.belongsToMany(Product, { through: CartItem} );
+Product.belongsToMany(Cart, { through: CartItem} );
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, { through: OrderItem });
 
 sequelize
 //.sync({ force: true }) //used force: true to drop and create DB 
