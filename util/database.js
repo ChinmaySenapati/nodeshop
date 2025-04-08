@@ -1,12 +1,13 @@
+require('dotenv').config();
 const mongodb = require('mongodb');
 const MongoClient = mongodb.MongoClient;
+
+const uri = process.env.MONGODB_URI;
 
 let _db;
 
 const mongoConnect = callback => {
-  MongoClient.connect(
-    'mongodb+srv://chinmays:EvhBfpV8JX2Lylev@cluster0.bcmob3z.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0'
-  )
+  MongoClient.connect(uri)
     .then(client => {
       console.log('Connected!');
       _db = client.db();
@@ -22,7 +23,7 @@ const getDb = () => {
   if (_db) {
     return _db;
   }
-  throw 'No database found!';
+  throw new RangeError("No database found!");
 };
 
 exports.mongoConnect = mongoConnect;
