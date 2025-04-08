@@ -30,11 +30,6 @@ class User {
         const updatedCart = {
             items: updatedCartItems
         }
-        // const updatedCart = updatedCartItems;
-        // const db = getDb();
-        // return db.collection('users').updateOne({ _id: new ObjectId(this._id)}, {$set: {cart: updatedCart}});
-
-        //const updatedCart = { items: [{ productId: new ObjectId(product._id), quantity: 1}] };
         const db = getDb();
         return db.collection('users').updateOne({ _id: new ObjectId(this._id)}, {$set: {cart: updatedCart}});
     }
@@ -75,7 +70,7 @@ class User {
                 items: products,
                 users: {
                     _id: new ObjectId(this._id),
-                    name: this.name,
+                    name: this.name
                 }
             };
             return db.collection('orders').insertOne(order)
@@ -92,10 +87,9 @@ class User {
 
     getOrders() {
         const db = getDb();
-        // return db.collection('orders').find().then(result => {
-        //     console.log('result');
-        //     result.redirect('/orders');
-        // })
+        return db.collection('orders')
+        .find({'users._id' : new ObjectId(this._id)})
+        .toArray()
     }
 
     static findById(userId) {
@@ -113,16 +107,3 @@ class User {
 }
 
 module.exports = User;
-
-
-
-// "cart": {
-//     "items": [
-//       {
-//         "productId": {
-//           "$oid": "67f3884cebb5e37e306bf19b"
-//         },
-//         "quantity": 1
-//       }
-//     ]
-//   }
