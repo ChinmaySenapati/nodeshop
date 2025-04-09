@@ -1,0 +1,22 @@
+[{
+  "_id": {
+    "$oid": "67f3884cebb5e37e306bf19b"
+  },
+  "title": "Node Book",
+  "price": "444.98",
+  "description": "okk",
+  "imageUrl": "https://media.gettyimages.com/id/1460007178/photo/library-books-on-table-and-background-for-studying-learning-and-research-in-education-school.jpg?s=612x612&w=gi&k=20&c=xE1dM2cIwzqyIOBogO5QCFnEhdXaxGESk6L16HnfAzc=",
+  "userId": {
+    "$oid": "67f376a403c3c3af8504d5b5"
+  }
+},
+{
+  "_id": {
+    "$oid": "67f4d5963ac42c354ad4b315"
+  },
+  "title": "New Book!",
+  "price": "45.56",
+  "description": "This is nice. ok",
+  "imageUrl": "https://media.gettyimages.com/id/1460007178/photo/library-books-on-table-and-background-for-studying-learning-and-research-in-education-school.jpg?s=612x612&w=gi&k=20&c=xE1dM2cIwzqyIOBogO5QCFnEhdXaxGESk6L16HnfAzc=",
+  "userId": null
+}]
