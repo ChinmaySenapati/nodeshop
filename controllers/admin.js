@@ -76,7 +76,11 @@ Product.findById(prodId).then(product =>{
 
 exports.getProducts = (req, res, next) => {
   Product.find()
+  //.select('title price -_id') //retrive data filtering by fields
+  //.populate('userId', 'name') //gives all the details info of the field & not just the id.
+    .populate('userId')
     .then(products => {
+      console.log(products)
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin Products',
