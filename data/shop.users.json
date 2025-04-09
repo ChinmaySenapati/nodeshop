@@ -1,0 +1,17 @@
+[{
+  "_id": {
+    "$oid": "67f376a403c3c3af8504d5b5"
+  },
+  "name": "chinmay",
+  "email": "test@test.com",
+  "cart": {
+    "items": [
+      {
+        "productId": {
+          "$oid": "67f3884cebb5e37e306bf19b"
+        },
+        "quantity": 1
+      }
+    ]
+  }
+}]
