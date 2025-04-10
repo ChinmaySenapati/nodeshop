@@ -18,7 +18,7 @@ exports.postAddProduct = (req, res, next) => {
     price: price,
     description: description,
     imageUrl: imageUrl,
-    userId: req.user  //here mongoose will take only the _id of the user from the whole passed object
+    userId: req.user
   });
   product
     .save()
@@ -60,14 +60,15 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
 
-Product.findById(prodId).then(product =>{
-  product.title = updatedTitle;
-  product.price = updatedPrice;
-  product.description = updatedDesc;
-  product.imageUrl = updatedImageUrl;
-  return product.save();
-})
-  .then(result => {
+  Product.findById(prodId)
+    .then(product => {
+      product.title = updatedTitle;
+      product.price = updatedPrice;
+      product.description = updatedDesc;
+      product.imageUrl = updatedImageUrl;
+      return product.save();
+    })
+    .then(result => {
       console.log('UPDATED PRODUCT!');
       res.redirect('/admin/products');
     })
@@ -76,11 +77,10 @@ Product.findById(prodId).then(product =>{
 
 exports.getProducts = (req, res, next) => {
   Product.find()
-  //.select('title price -_id') //retrive data filtering by fields
-  //.populate('userId', 'name') //gives all the details info of the field & not just the id.
-    .populate('userId')
+    // .select('title price -_id')
+    // .populate('userId', 'name')
     .then(products => {
-      console.log(products)
+      console.log(products);
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin Products',
