@@ -8,13 +8,19 @@ exports.getLogin = (req, res, next) => {
   });
 };
 
+exports.getSignup = (req, res, next) => {
+  res.render('auth/signup', {
+    path: '/signup',
+    pageTitle: 'Signup',
+    isAuthenticated: false
+  });
+};
+
 exports.postLogin = (req, res, next) => {
   User.findById('67f69a4826367ac89c3439db')
     .then(user => {
       req.session.isLoggedIn = true;
       req.session.user = user;
-      //must need to save first- once the session is created successfully in mongoDB 
-      // then only redirect to main page.
       req.session.save(err => {
         console.log(err);
         res.redirect('/');
@@ -22,6 +28,8 @@ exports.postLogin = (req, res, next) => {
     })
     .catch(err => console.log(err));
 };
+
+exports.postSignup = (req, res, next) => {};
 
 exports.postLogout = (req, res, next) => {
   req.session.destroy(err => {
