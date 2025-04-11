@@ -66,18 +66,6 @@ app.use(errorController.get404);
 
 mongoose.connect(uri)
 .then(result =>{
-  User.findOne().then(user => {
-    if(!user) {
-      const user = new User({
-        name: 'chinmay',
-        email: 'test@test.com',
-        cart: {
-          items: []
-        }
-      });
-      user.save();
-    }
-  })
   console.log('connected!');
   app.listen(3000);
 })
