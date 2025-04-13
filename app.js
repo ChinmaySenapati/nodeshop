@@ -54,12 +54,9 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  User.findById('67f69a4826367ac89c3439db')
-    .then(user => {
-      req.user = user;
-      next();
-    })
-    .catch(err => console.log(err));
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
 });
 
 app.use('/admin', adminRoutes);
