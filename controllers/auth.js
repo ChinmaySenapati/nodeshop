@@ -1,6 +1,15 @@
 const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+require('dotenv').config();
 
 const User = require('../models/user');
+
+const transporter = nodemailer.createTransport(sendgridTransport({
+  auth: {
+    api_key: process.env.SENDGRID_API_KEY
+  }
+}));
 
 exports.getLogin = (req, res, next) => {
   //console.log(req.flash('error')); // we got empty [] thus the error box is still on the page.
@@ -85,7 +94,18 @@ exports.postSignup = (req, res, next) => {
         .then(result => {
           console.log('User created');
           res.redirect('/login');
-        });
+          return transporter.sendMail({
+            to: email,
+            from: 'noreply@shop.com',
+            subject: 'Signup Confirmation',
+            html: `
+              <h1>Welcome to our shop!</h1>
+              <p>Thank you for signing up. Please confirm your email by clicking the link below:</p>
+              <a href="http://localhost:3000/auth/confirm/${result.id}">Confirm Email</a>
+            `
+          });
+        })
+        .catch(err => console.log(err));
     })
     .catch(err => {
       console.log(err);
