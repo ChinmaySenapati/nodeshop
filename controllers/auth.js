@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
@@ -130,5 +132,39 @@ exports.getReset = (req, res, next) => {
     path: '/reset',
     pageTitle: 'Reset Password',
     errorMessage: message
+  });
+};
+
+exports.postReset = (req, res, next) => {
+  crypto.randomBytes(32, (err, buffer) => {
+    if(err) {
+      console.log(err);
+      return res.redirect('/reset');
+    }
+    const token = buffer.toString('hex');
+    User.findOne({ email: req.body.email })
+    .then(user => { 
+      if( !user ) {
+        res.flash('error', 'No account with that email found.');
+        return res.redirect('/reset');
+      }
+      user.resetToken = token;
+      user.resetTokenExpiration = Date.now() + 3600000; // 1 hour
+      return user.save();
+    })
+    .then(result => {
+      res.redirect('/');
+      return transporter.sendMail({
+        to: req.body.email,
+        from: 'noreply@shop.com',
+        subject: 'Password Reset',
+        html: `
+          <h1>Password Reset</h1>
+          <p>You requested a password reset. Click the link below to set a new password:</p>
+          <a href="http://localhost:3000/reset/${token}">Reset Password</a>
+        `
+      });
+    })
+    .catch(err => console.log(err));
   });
 };
