@@ -18,10 +18,14 @@ router.post(
     .isEmail()
     .withMessage('Please enter a valid email address')
     .custom(async (value, { req }) => {
-        const user = await User.findOne({ email: value });
-        if (user) {
-            throw new Error('Email already exists. Please choose a different email address.');
+        if (value === 'test2@test.com') {
+            throw new Error('Email is not allowed. Please choose a different email address.');
         }
+        return true;
+        // const user = await User.findOne({ email: value });
+        // if (user) {
+        //     throw new Error('Email already exists. Please choose a different email address.');
+        // }
     }), 
     body(
         'password', 
@@ -29,7 +33,12 @@ router.post(
     )
     .isLength({ min: 5 })
     .isAlphanumeric(),
-    //body('confirmPassword')
+    body('confirmPassword').custom((value, { req }) => {
+        if (value !== req.body.password) {
+            throw new Error('Passwords do not match.');
+        }
+        return true;
+    })
 ],
 authController.postSignup);
 
