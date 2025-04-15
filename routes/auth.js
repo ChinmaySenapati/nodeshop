@@ -18,14 +18,24 @@ router.post(
     .isEmail()
     .withMessage('Please enter a valid email address')
     .custom(async (value, { req }) => {
-        if (value === 'test2@test.com') {
-            throw new Error('Email is not allowed. Please choose a different email address.');
-        }
-        return true;
+        // 1st way of checking email uniqueness
+        // if (value === 'test2@test.com') {
+        //     throw new Error('Email is not allowed. Please choose a different email address.');
+        // }
+        // return true;
+
+        // 2nd way of checking email uniqueness
         // const user = await User.findOne({ email: value });
         // if (user) {
         //     throw new Error('Email already exists. Please choose a different email address.');
         // }
+
+        // 3rd way of checking email uniqueness using MongoDB
+        return User.findOne({ email: value }).then(userDoc => {
+            if (userDoc) {
+                return Promise.reject('Email already exists. Please choose a different email address.');
+            }
+        });
     }), 
     body(
         'password', 
