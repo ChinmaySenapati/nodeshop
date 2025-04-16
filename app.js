@@ -50,13 +50,13 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  throw new Error('Sync Dummy error');
+  //throw new Error('Sync Dummy error');
   if(!req.session.user) {
     return next();
   }
   User.findById(req.session.user._id)
       .then(user => {
-        throw new Error('Async Dummy error');
+        //throw new Error('Async Dummy error');
         if (!user) {
           req.session.destroy((err) => {
             console.log(err);
