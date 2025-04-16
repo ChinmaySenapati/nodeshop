@@ -15,7 +15,8 @@
                 <label for="email">E-Mail</label>
                 <input 
                     class="<%= validationErrors.find(e => e.path === 'email') ? 'invalid' : '' %>"
-                    placeholder="Enter your email"
+                    placeholder="Enter your email" 
+                    autocomplete="off" 
                     type="email" 
                     name="email" 
                     id="email" 
@@ -25,7 +26,8 @@
                 <label for="password">Password</label>
                 <input 
                     class="<%= validationErrors.find(e => e.path === 'password') ? 'invalid' : '' %>"
-                    placeholder="Enter your password"
+                    placeholder="Enter your password" 
+                    autocomplete="off" 
                     type="password" 
                     name="password" 
                     id="password" 
@@ -35,7 +37,8 @@
                 <label for="confirmPassword">Confirm Password</label>
                 <input 
                     class="<%= validationErrors.find(e => e.path === 'confirmPassword') ? 'invalid' : '' %>"
-                    placeholder="Enter your confirm password"
+                    placeholder="Enter your confirm password" 
+                    autocomplete="off" 
                     type="password" 
                     name="confirmPassword" 
                     id="confirmPassword" 
