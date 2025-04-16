@@ -39,7 +39,7 @@ exports.postAddProduct = (req, res, next) => {
   }
 
   const product = new Product({
-    _id: new mongoose.Types.ObjectId('67fbd5edd3a2e529a5ffad78'),
+    _id: new mongoose.Types.ObjectId('67fbd5edd3a2e529a5ffad78'), //added to create an issue
     title: title,
     price: price,
     description: description,
@@ -69,7 +69,13 @@ exports.postAddProduct = (req, res, next) => {
     //     validationErrors: []
     //   });
     
-    res.redirect('/500');
+    //res.redirect('/500');
+
+    //throw new Error('Database error, please try again later.');
+  
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
   });
 };
 
@@ -81,6 +87,7 @@ exports.getEditProduct = (req, res, next) => {
   const prodId = req.params.productId;
   Product.findById(prodId)
     .then(product => {
+      throw new Error('Product not found'); // This is a workaround for a bug in the mongoose library
       if (!product) {
         return res.redirect('/');
       }
@@ -94,7 +101,11 @@ exports.getEditProduct = (req, res, next) => {
         validationErrors: []
       });
     })
-    .catch(err => res.redirect('/500'));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postEditProduct = (req, res, next) => {

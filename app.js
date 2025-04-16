@@ -78,6 +78,12 @@ app.get('/500', errorController.get500);
 
 app.use(errorController.get404);
 
+app.use((error, req, res, next) => {
+  console.error(error.stack);
+  //res.status(error.statusCode || 500).render('error', {});
+  res.redirect('/500');
+});
+
 mongoose.connect(uri)
 .then(result =>{
   console.log('connected!');
