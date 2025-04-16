@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-const mongoose = require('mongoose');
+//const mongoose = require('mongoose');
 const { validationResult } = require('express-validator');
 
 exports.getAddProduct = (req, res, next) => {
@@ -39,7 +39,7 @@ exports.postAddProduct = (req, res, next) => {
   }
 
   const product = new Product({
-    _id: new mongoose.Types.ObjectId('67fbd5edd3a2e529a5ffad78'), //added to create an issue
+    //_id: new mongoose.Types.ObjectId('67fbd5edd3a2e529a5ffad78'), //added to create an issue
     title: title,
     price: price,
     description: description,
@@ -87,7 +87,7 @@ exports.getEditProduct = (req, res, next) => {
   const prodId = req.params.productId;
   Product.findById(prodId)
     .then(product => {
-      throw new Error('Product not found'); // This is a workaround for a bug in the mongoose library
+      //throw new Error('Product not found'); // This is a workaround for a bug in the mongoose library
       if (!product) {
         return res.redirect('/');
       }
@@ -149,7 +149,11 @@ exports.postEditProduct = (req, res, next) => {
         res.redirect('/admin/products');
       })
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getProducts = (req, res, next) => {
@@ -164,7 +168,11 @@ exports.getProducts = (req, res, next) => {
         path: '/admin/products'
       });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postDeleteProduct = (req, res, next) => {
@@ -174,5 +182,9 @@ exports.postDeleteProduct = (req, res, next) => {
       console.log('DESTROYED PRODUCT');
       res.redirect('/admin/products');
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
