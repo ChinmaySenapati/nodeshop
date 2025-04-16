@@ -49,10 +49,19 @@ app.use((req, res, next) => {
   }
   User.findById(req.session.user._id)
       .then(user => {
+        if (!user) {
+          req.session.destroy((err) => {
+            console.log(err);
+          });
+          req.user = null;
+          return next();
+        }
         req.user = user;
         next();
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        throw new Error(err);
+      });
 });
 
 app.use((req, res, next) => {
