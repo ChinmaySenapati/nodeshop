@@ -16,6 +16,7 @@
                 <input 
                     class="<%= validationErrors.find(e => e.path === 'email') ? 'invalid' : '' %>" 
                     placeholder="Enter your email" 
+                    required
                     type="email" 
                     name="email" 
                     id="email" 
@@ -26,6 +27,7 @@
                 <input 
                     class="<%= validationErrors.find(e => e.path === 'password') ? 'invalid' : '' %>" 
                     placeholder="Enter your password" 
+                    required
                     type="password" 
                     name="password" 
                     id="password" 
