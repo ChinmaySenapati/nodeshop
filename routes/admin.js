@@ -16,12 +16,12 @@ router.get('/products', isAuth, adminController.getProducts);
 
 // /admin/add-product => POST
 router.post('/add-product', [
-    check('title')
+    body('title')
+       .isString()
         .isLength({ min: 3 })
         .trim()
         .notEmpty()
-        .withMessage('Title must not be empty')
-        .isAlphanumeric,
+        .withMessage('Title must not be empty'),
     body('imageUrl')
        .notEmpty()
        .withMessage('Image URL must not be empty')
