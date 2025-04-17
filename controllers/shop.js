@@ -1,3 +1,8 @@
+const fs = require('fs');
+const path = require('path');
+
+const PDFDocument = require('pdfkit');
+
 const Product = require('../models/product');
 const Order = require('../models/order');
 
@@ -144,4 +149,60 @@ exports.getOrders = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
+};
+
+exports.getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  Order.findById(orderId)
+   .then(order => {
+      if (!order) {
+        return next(new Error('Order not found.'));
+      }
+      if (order.user.userId.toString()!== req.user._id.toString()) {
+        return next(new Error('Unauthorized Access.'));
+      }
+  const invoiceName = `invoice-${orderId}.pdf`;
+  const invoicePath = path.join('data', 'invoices', invoiceName);
+  
+  //PDF generation on fly starts here
+  const pdfDoc = new PDFDocument();
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`);
+  pdfDoc.pipe(fs.createWriteStream(invoicePath));
+  pdfDoc.pipe(res);
+
+  pdfDoc.fontSize(23).text('Invoice', { align: 'center', underline: true });
+  pdfDoc.text(`------------------------------------------------------`);
+  pdfDoc.fontSize(21).text(`Order Number: ${order._id}`);
+  //pdfDoc.text(`Date: ${order.createdAt.toISOString().split('T')[0]}`);
+  let totalPrice = 0;
+  order.products.forEach(product => {
+    totalPrice += product.quantity * product.product.price;
+    pdfDoc.fontSize(16).text(`${product.product.title} - ${product.quantity} x $${product.product.price}`);
+  });
+  pdfDoc.fontSize(20).text(`Total: $${totalPrice}`);
+
+  pdfDoc.end();
+  //For Small file size preloading data of a file (like less than 1MB)
+  // fs.readFile(invoicePath, (err, data) => {
+  //   if (err) {
+  //     return next(err);
+  //   }
+  //   res.setHeader('Content-Type', 'application/pdf');
+  //   res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`); //will show the pdf file inline in the browser
+  //   //res.setHeader('Content-Disposition', `attachment; filename=${invoiceName}`);
+  //   res.send(data);
+  //   });
+
+  //For Large file size used streaming of data of a file (like more than 1MB)
+  // const file = fs.createReadStream(invoicePath);
+  // res.setHeader('Content-Type', 'application/pdf');
+  // res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`);
+  // file.pipe(res);
+  })
+   .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+  });
 };
