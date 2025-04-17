@@ -22,12 +22,6 @@ router.post('/add-product', [
         .trim()
         .notEmpty()
         .withMessage('Title must not be empty'),
-    body('imageUrl')
-       .notEmpty()
-       .withMessage('Image URL must not be empty')
-       .isURL()
-       .trim()
-       .isLength({ max: 2083 }), // Maximum URL length
     body('price')
        .isFloat()
        .withMessage('Price must be a number'),
