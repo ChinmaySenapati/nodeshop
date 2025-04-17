@@ -164,19 +164,23 @@ exports.getInvoice = (req, res, next) => {
   const invoiceName = `invoice-${orderId}.pdf`;
   const invoicePath = path.join('data', 'invoices', invoiceName);
   
+  //PDF generation on fly starts here
   const pdfDoc = new PDFDocument();
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`);
   pdfDoc.pipe(fs.createWriteStream(invoicePath));
   pdfDoc.pipe(res);
 
-  pdfDoc.fontSize(20).text('Invoice', { align: 'center' });
-  pdfDoc.text(`Order Number: ${order._id}`);
+  pdfDoc.fontSize(23).text('Invoice', { align: 'center', underline: true });
+  pdfDoc.text(`------------------------------------------------------`);
+  pdfDoc.fontSize(21).text(`Order Number: ${order._id}`);
   //pdfDoc.text(`Date: ${order.createdAt.toISOString().split('T')[0]}`);
+  let totalPrice = 0;
   order.products.forEach(product => {
-    pdfDoc.text(`${product.product.title} - ${product.quantity} x $${product.product.price}`);
+    totalPrice += product.quantity * product.product.price;
+    pdfDoc.fontSize(16).text(`${product.product.title} - ${product.quantity} x $${product.product.price}`);
   });
-  pdfDoc.text(`Total: $${order.totalPrice}`);
+  pdfDoc.fontSize(20).text(`Total: $${totalPrice}`);
 
   pdfDoc.end();
   //For Small file size preloading data of a file (like less than 1MB)
