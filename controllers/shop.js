@@ -161,15 +161,22 @@ exports.getInvoice = (req, res, next) => {
       }
   const invoiceName = `invoice-${orderId}.pdf`;
   const invoicePath = path.join('data', 'invoices', invoiceName);
-  fs.readFile(invoicePath, (err, data) => {
-    if (err) {
-      return next(err);
-    }
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`); //will show the pdf file inline in the browser
-    //res.setHeader('Content-Disposition', `attachment; filename=${invoiceName}`);
-    res.send(data);
-    });
+  //For Small file size preloading data of a file (like less than 1MB)
+  // fs.readFile(invoicePath, (err, data) => {
+  //   if (err) {
+  //     return next(err);
+  //   }
+  //   res.setHeader('Content-Type', 'application/pdf');
+  //   res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`); //will show the pdf file inline in the browser
+  //   //res.setHeader('Content-Disposition', `attachment; filename=${invoiceName}`);
+  //   res.send(data);
+  //   });
+
+  //For Large file size used streaming of data of a file (like more than 1MB)
+  const file = fs.createReadStream(invoicePath);
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`);
+  file.pipe(res);
   })
    .catch(err => {
       const error = new Error(err);
