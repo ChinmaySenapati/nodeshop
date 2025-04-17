@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const PDFDocument = require('pdfkit');
+
 const Product = require('../models/product');
 const Order = require('../models/order');
 
@@ -161,6 +163,22 @@ exports.getInvoice = (req, res, next) => {
       }
   const invoiceName = `invoice-${orderId}.pdf`;
   const invoicePath = path.join('data', 'invoices', invoiceName);
+  
+  const pdfDoc = new PDFDocument();
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`);
+  pdfDoc.pipe(fs.createWriteStream(invoicePath));
+  pdfDoc.pipe(res);
+
+  pdfDoc.fontSize(20).text('Invoice', { align: 'center' });
+  pdfDoc.text(`Order Number: ${order._id}`);
+  //pdfDoc.text(`Date: ${order.createdAt.toISOString().split('T')[0]}`);
+  order.products.forEach(product => {
+    pdfDoc.text(`${product.product.title} - ${product.quantity} x $${product.product.price}`);
+  });
+  pdfDoc.text(`Total: $${order.totalPrice}`);
+
+  pdfDoc.end();
   //For Small file size preloading data of a file (like less than 1MB)
   // fs.readFile(invoicePath, (err, data) => {
   //   if (err) {
@@ -173,10 +191,10 @@ exports.getInvoice = (req, res, next) => {
   //   });
 
   //For Large file size used streaming of data of a file (like more than 1MB)
-  const file = fs.createReadStream(invoicePath);
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`);
-  file.pipe(res);
+  // const file = fs.createReadStream(invoicePath);
+  // res.setHeader('Content-Type', 'application/pdf');
+  // res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`);
+  // file.pipe(res);
   })
    .catch(err => {
       const error = new Error(err);
