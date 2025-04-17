@@ -151,6 +151,14 @@ exports.getOrders = (req, res, next) => {
 
 exports.getInvoice = (req, res, next) => {
   const orderId = req.params.orderId;
+  Order.findById(orderId)
+   .then(order => {
+      if (!order) {
+        return next(new Error('Order not found.'));
+      }
+      if (order.user.userId.toString()!== req.user._id.toString()) {
+        return next(new Error('Unauthorized Access.'));
+      }
   const invoiceName = `invoice-${orderId}.pdf`;
   const invoicePath = path.join('data', 'invoices', invoiceName);
   fs.readFile(invoicePath, (err, data) => {
@@ -158,8 +166,14 @@ exports.getInvoice = (req, res, next) => {
       return next(err);
     }
     res.setHeader('Content-Type', 'application/pdf');
-    //res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`); //will show the pdf file inline in the browser
-    res.setHeader('Content-Disposition', `attachment; filename=${invoiceName}`);
+    res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`); //will show the pdf file inline in the browser
+    //res.setHeader('Content-Disposition', `attachment; filename=${invoiceName}`);
     res.send(data);
+    });
+  })
+   .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
   });
 };
