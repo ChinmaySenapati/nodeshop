@@ -3,9 +3,7 @@
     </head>
 
     <body>
-        <%- include('../includes/navigation.ejs') %>
         <main>
-            <% if (products.length > 0) { %>
                 <ul class="cart__item-list">
                     <% products.forEach(p => { %>
                         <li class="cart__item">
@@ -31,6 +29,5 @@
                         });
                 </script>
             </div>
-            <% } %>
         </main>
         <%- include('../includes/end.ejs') %>
